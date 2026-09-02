@@ -1,0 +1,44 @@
+{% extends "Reservas/base.html" %}
+{% block title %}Reservar Espacio{% endblock %}
+{% block content %}
+<h1>Reservar un Espacio</h1>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+
+<h2>Espacios disponibles</h2>
+<ul style="list-style:none; padding:0;">
+    {% for e in espacios %}
+    <li style="padding:12px 0; border-bottom:1px solid #ddd;">
+        <div>{{ e.nombre }} — quedan: <strong>{{ e.cantidad_disponible }}</strong></div>
+        <form method="post" style="margin-top:8px; display:flex; gap:8px; align-items:end; flex-wrap:wrap;">
+            {% csrf_token %}
+            <input type="hidden" name="espacio_id" value="{{ e.id }}">
+            <label>Hora inicio
+                <input type="time" name="hora_inicio" required>
+            </label>
+            <label>Duración
+                <select name="duracion_horas">
+                    <option value="1">1 hora</option>
+                    <option value="2">2 horas</option>
+                </select>
+            </label>
+            <button type="submit" {% if e.cantidad_disponible < 1 %}disabled{% endif %}>Reservar</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+
+<h2>Reservas activas</h2>
+<ul style="list-style:none; padding:0;">
+    {% for r in reservas_activas %}
+    <li style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #ddd;">
+        <span>{{ r.espacio.nombre }} — {{ r.hora_inicio }} ({{ r.duracion_horas }}h)</span>
+        <form method="post" action="{% url 'liberar_espacio' r.id %}" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit">Ya liberé este espacio</button>
+        </form>
+    </li>
+    {% empty %}
+    <li>No hay reservas activas.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

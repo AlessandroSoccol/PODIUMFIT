@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Reservas{% endblock %}</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        .boton { display: block; padding: 12px; margin: 10px 0; background: #2c3e50; color: white;
+                  text-align: center; text-decoration: none; border-radius: 6px; }
+        .boton:hover { background: #1a252f; }
+        .error { color: #c0392b; }
+        label { display: block; margin-top: 10px; }
+        input, select { width: 100%; padding: 6px; margin-top: 4px; }
+        button[type="submit"] { margin-top: 16px; padding: 10px 16px; }
+    </style>
+</head>
+<body>
+    <header><h2><a href="{% url 'index' %}" style="text-decoration:none; color:inherit;">Reservas</a></h2></header>
+    <hr>
+    {% block content %}
+    <h1>¿Qué deseas reservar?</h1>
+    <a href="{% url 'reservar_espacio' %}" class="boton">Reservar un Espacio</a>
+    <a href="{% url 'reservar_indumentaria' %}" class="boton">Reservar Indumentaria Deportiva</a>
+    {% endblock %}
+</body>
+</html>
