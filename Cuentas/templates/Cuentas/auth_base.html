@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}PodiumFit{% endblock %} · PodiumFit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --navy: #12233D;
+        --navy-light: #1B3253;
+        --paper: #F7F5EF;
+        --ink: #182430;
+        --ink-soft: #52606D;
+        --gold: #D9A441;
+        --gold-dark: #A97417;
+        --silver: #AEB7BF;
+        --bronze: #BD8355;
+        --line: rgba(247, 245, 239, 0.18);
+        --danger: #B3403A;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        font-family: 'Inter', system-ui, sans-serif;
+        color: var(--ink);
+        background: var(--paper);
+    }
+    .layout { display: grid; grid-template-columns: 42% 58%; min-height: 100vh; }
+
+    .panel {
+        position: relative;
+        background: var(--navy) url('{% static "Cuentas/img/nuevofondo.jpg" %}') center / cover no-repeat;
+        padding: 32px;
+    }
+    .panel::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(18, 35, 61, 0.15) 0%, rgba(18, 35, 61, 0.55) 100%);
+    }
+    .logo-plate {
+        position: relative;
+        z-index: 1;
+        display: inline-flex;
+        background: var(--paper);
+        padding: 14px 18px 10px;
+        border-radius: 8px;
+    }
+    .logo-plate img { display: block; height: 34px; width: auto; }
+
+    .form-side { display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+    .form-card { width: 100%; max-width: 380px; }
+    .form-card h1 {
+        font-family: 'Big Shoulders Display', sans-serif;
+        font-weight: 700;
+        font-size: 34px;
+        letter-spacing: 0.01em;
+        margin: 0 0 6px;
+    }
+    .subhead { color: var(--ink-soft); font-size: 15px; margin: 0 0 28px; line-height: 1.5; }
+
+    label { display: block; font-size: 13px; font-weight: 500; color: var(--ink-soft); margin: 18px 0 6px; }
+    input {
+        width: 100%;
+        padding: 11px 12px;
+        font-size: 15px;
+        font-family: inherit;
+        color: var(--ink);
+        background: #fff;
+        border: 1px solid #D9D5C8;
+        border-radius: 6px;
+    }
+    input:focus-visible {
+        outline: none;
+        border-color: var(--gold-dark);
+        box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.25);
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        margin-top: 26px;
+        padding: 13px;
+        font-size: 15px;
+        font-weight: 600;
+        font-family: inherit;
+        letter-spacing: 0.01em;
+        background: var(--navy);
+        color: var(--paper);
+        border: none;
+        border-bottom: 3px solid var(--gold);
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    button[type="submit"]:hover { background: var(--navy-light); }
+    button[type="submit"]:focus-visible { outline: 3px solid var(--gold-dark); outline-offset: 2px; }
+
+    .switch { margin-top: 22px; font-size: 14px; color: var(--ink-soft); text-align: center; }
+    .switch a { color: var(--gold-dark); font-weight: 600; text-decoration: none; }
+    .switch a:hover { text-decoration: underline; }
+
+    .errores { list-style: none; margin: 0 0 16px; padding: 12px 14px; background: #FBEAE8; border: 1px solid #EFC3BF; border-radius: 6px; color: var(--danger); font-size: 13.5px; }
+    .errores li + li { margin-top: 4px; }
+
+    @media (max-width: 860px) {
+        .layout { grid-template-columns: 1fr; display: block; }
+        .panel { height: 180px; padding: 24px; }
+        .form-side { align-items: flex-start; padding: 32px 24px 48px; }
+    }
+</style>
+</head>
+<body>
+<div class="layout">
+    <aside class="panel">
+
+    </aside>
+    <main class="form-side">
+        <div class="form-card">
+            <h1>{% block heading %}{% endblock %}</h1>
+            <p class="subhead">{% block subhead %}{% endblock %}</p>
+            {% if error %}<ul class="errores"><li>{{ error }}</li></ul>{% endif %}
+            {% if errores %}
+                <ul class="errores">
+                    {% for campo, msgs in errores.items %}{% for m in msgs %}<li>{{ m }}</li>{% endfor %}{% endfor %}
+                </ul>
+            {% endif %}
+            {% block form %}{% endblock %}
+        </div>
+    </main>
+</div>
+</body>
+</html>

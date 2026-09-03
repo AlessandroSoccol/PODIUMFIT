@@ -3,13 +3,19 @@
 {% block content %}
 <h1>Reservar un Espacio</h1>
 {% if error %}<p class="error">{{ error }}</p>{% endif %}
+{% if bloqueo_activo %}
+<p class="aviso">Hay otro espacio reservado en este momento. Debes esperar a que se agote su tiempo para reservar uno distinto.</p>
+{% endif %}
 
 <h2>Espacios disponibles</h2>
-<ul style="list-style:none; padding:0;">
+<ul class="lista-tarjetas">
     {% for e in espacios %}
-    <li style="padding:12px 0; border-bottom:1px solid #ddd;">
-        <div>{{ e.nombre }} — quedan: <strong>{{ e.cantidad_disponible }}</strong></div>
-        <form method="post" style="margin-top:8px; display:flex; gap:8px; align-items:end; flex-wrap:wrap;">
+    <li class="tarjeta">
+        <div class="titulo-item">
+            <span>{{ e.nombre }}</span>
+            <span class="disponibilidad">quedan: {{ e.cantidad_disponible }}</span>
+        </div>
+        <form method="post" class="form-reserva">
             {% csrf_token %}
             <input type="hidden" name="espacio_id" value="{{ e.id }}">
             <label>Hora inicio
@@ -18,27 +24,33 @@
             <label>Duración
                 <select name="duracion_horas">
                     <option value="1">1 hora</option>
-                    <option value="2">2 horas</option>
                 </select>
             </label>
-            <button type="submit" {% if e.cantidad_disponible < 1 %}disabled{% endif %}>Reservar</button>
+            <button type="submit"
+                {% if e.cantidad_disponible < 1 %}disabled
+                {% elif bloqueo_activo and e.id != espacio_bloqueante_id %}disabled{% endif %}>Reservar</button>
         </form>
     </li>
     {% endfor %}
 </ul>
 
 <h2>Reservas activas</h2>
-<ul style="list-style:none; padding:0;">
+<ul class="lista-tarjetas">
     {% for r in reservas_activas %}
-    <li style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #ddd;">
-        <span>{{ r.espacio.nombre }} — {{ r.hora_inicio }} ({{ r.duracion_horas }}h)</span>
-        <form method="post" action="{% url 'liberar_espacio' r.id %}" style="margin:0;">
-            {% csrf_token %}
-            <button type="submit">Ya liberé este espacio</button>
-        </form>
+    <li class="tarjeta">
+        <div class="fila-activa">
+            <span class="info">
+                {{ r.espacio.nombre }} — {{ r.hora_inicio }} ({{ r.duracion_horas }}h)
+                <span class="countdown" data-fin="{{ r.fin }}">calculando…</span>
+            </span>
+            <form method="post" action="{% url 'liberar_espacio' r.id %}">
+                {% csrf_token %}
+                <button type="submit">Ya liberé este espacio</button>
+            </form>
+        </div>
     </li>
     {% empty %}
-    <li>No hay reservas activas.</li>
+    <li class="tarjeta">No hay reservas activas.</li>
     {% endfor %}
 </ul>
 {% endblock %}

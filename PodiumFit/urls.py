@@ -19,6 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # ... tus otras urls existentes ...
+    path('cuentas/', include('Cuentas.urls')),
+    path('notificaciones/', include('Notificaciones.urls')),
     path('', include('Reservas.urls')),   # <- con R mayúscula, aquí sí
 ]

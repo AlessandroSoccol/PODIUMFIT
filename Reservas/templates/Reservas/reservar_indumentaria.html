@@ -5,11 +5,14 @@
 {% if error %}<p class="error">{{ error }}</p>{% endif %}
 
 <h2>Indumentaria disponible</h2>
-<ul style="list-style:none; padding:0;">
+<ul class="lista-tarjetas">
     {% for i in items %}
-    <li style="padding:12px 0; border-bottom:1px solid #ddd;">
-        <div>{{ i.nombre }} (talla {{ i.talla }}) — quedan: <strong>{{ i.stock }}</strong></div>
-        <form method="post" style="margin-top:8px; display:flex; gap:8px; align-items:end; flex-wrap:wrap;">
+    <li class="tarjeta">
+        <div class="titulo-item">
+            <span>{{ i.nombre }}</span>
+            <span class="disponibilidad">quedan: {{ i.stock }}</span>
+        </div>
+        <form method="post" class="form-reserva">
             {% csrf_token %}
             <input type="hidden" name="indumentaria_id" value="{{ i.id }}">
             <label>Hora inicio
@@ -28,17 +31,22 @@
 </ul>
 
 <h2>Reservas activas</h2>
-<ul style="list-style:none; padding:0;">
+<ul class="lista-tarjetas">
     {% for r in reservas_activas %}
-    <li style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #ddd;">
-        <span>{{ r.indumentaria.nombre }} — {{ r.hora_inicio }} ({{ r.duracion_horas }}h)</span>
-        <form method="post" action="{% url 'devolver_indumentaria' r.id %}" style="margin:0;">
-            {% csrf_token %}
-            <button type="submit">Ya devolví esto</button>
-        </form>
+    <li class="tarjeta">
+        <div class="fila-activa">
+            <span class="info">
+                {{ r.indumentaria.nombre }} — {{ r.hora_inicio }} ({{ r.duracion_horas }}h)
+                <span class="countdown" data-fin="{{ r.fin }}">calculando…</span>
+            </span>
+            <form method="post" action="{% url 'devolver_indumentaria' r.id %}">
+                {% csrf_token %}
+                <button type="submit">Ya devolví esto</button>
+            </form>
+        </div>
     </li>
     {% empty %}
-    <li>No hay reservas activas.</li>
+    <li class="tarjeta">No hay reservas activas.</li>
     {% endfor %}
 </ul>
 {% endblock %}
