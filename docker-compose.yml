@@ -1,0 +1,42 @@
+services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - "8000"
+    environment:
+      DJANGO_SETTINGS_MODULE: PodiumFit.settings
+      DJANGO_DB_PATH: /data/db.sqlite3
+      NOTIFICADOR_MODE: ${NOTIFICADOR_MODE:-MOCK}
+    volumes:
+      - ./:/data
+    restart: unless-stopped
+
+  cuentas:
+    build:
+      context: ./cuentas_service
+      dockerfile: Dockerfile
+    expose:
+      - "5000"
+    environment:
+      CUENTAS_DB_PATH: /data/db.sqlite3
+      CUENTAS_SECRET_KEY: ${CUENTAS_SECRET_KEY:-cambia-esta-clave-en-produccion}
+      CUENTAS_DOMINIO: "@eafit.edu.co"
+      CUENTAS_PBKDF2_ITERATIONS: "1500000"
+    volumes:
+      - ./:/data
+    depends_on:
+      - django
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - django
+      - cuentas
+    restart: unless-stopped
