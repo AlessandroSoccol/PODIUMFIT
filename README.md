@@ -44,30 +44,6 @@ Es el flujo más complejo del sistema:
 
 ## Arquitectura híbrida: Strangler Pattern
 
-### Módulo estrangulado: `Cuentas`
-
-Se evaluaron `Cuentas`, `Notificaciones` y `Reservas` con una matriz de decisión ponderada (frecuencia de cambio, consumo de recursos y acoplamiento a la base de datos). El módulo con el menor total es el candidato más seguro para extraer:
-
-| Criterio | Peso | Cuentas | Notificaciones | Reservas |
-|---|:---:|:---:|:---:|:---:|
-| Frecuencia de cambio | 4 | 2 → 8 | 4 → 16 | 8 → 32 |
-| Consumo de recursos | 2 | 2 → 4 | 3 → 6 | 7 → 14 |
-| Acoplamiento a la base de datos | 3 | 4 → 12 | 7 → 21 | 9 → 27 |
-| **TOTAL** | | **24** | **43** | **73** |
-| **Decisión** | | **Flask** | Django | Django |
-
-*(Cada celda: puntaje → puntaje × peso.)*
-
-### Topología
-
-```mermaid
-flowchart LR
-    U["Cliente"] --> N{{"Nginx :80<br/>(publicado en :8080)"}}
-    N -- "/api/v2/cuentas/*" --> F["Flask – cuentas :5000"]
-    N -- "/api/v1/* y /" --> D["Django – monolito :8000"]
-    D --> DB[("SQLite db.sqlite3<br/>tabla auth_user compartida")]
-    F --> DB
-```
 
 ### Ruteo de tráfico (Nginx)
 
