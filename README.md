@@ -50,6 +50,7 @@ Es el flujo más complejo del sistema:
 | Ruta | Destino |
 |---|---|
 | `/api/v2/cuentas/` | Microservicio Flask (`cuentas:5000`) |
+| `/api/v2/datos/` | Microservicio Flask de datos (`datos:5000`) |
 | `/api/v1/` | Monolito Django (`django:8000`) |
 | `/` (resto) | Monolito Django (`django:8000`) |
 
@@ -86,6 +87,13 @@ Replica las mismas capas que tenía la app Django original (detalle en [`cuentas
 ```
 
 **Compatibilidad con el monolito:** ambos servicios comparten la tabla `auth_user` y el mismo hashing PBKDF2-SHA256 (1.500.000 iteraciones, el valor por defecto de Django 6.1), por lo que una cuenta creada en uno puede iniciar sesión en el otro.
+
+### Servicio de datos, Adapter y tareas asíncronas (Entrega 2)
+
+- **`datos_service/`** — segundo microservicio Flask. Expone `GET /api/v2/datos/datos` (JSON del sistema) y `GET /api/v2/datos/health`.
+- **`core/adapters.py`** — `ProveedorExternoInterface` + `AdaptadorAPI`: consumo de API de terceros mediante el patrón *Adapter* (inversión de dependencias).
+- **`core/tasks.py`** — tarea Celery `procesar_reporte_asincrono` ejecutada en segundo plano por el servicio `celery_worker`.
+- **`redis_broker`** — Redis como *message broker* (`CELERY_BROKER_URL`); la app Celery está en `PodiumFit/celery.py`.
 
 ### Preparado para evolucionar
 

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'Cuentas',
     'Notificaciones',
     'Reservas',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -135,3 +136,9 @@ DEFAULT_FROM_EMAIL = 'no-reply@eafit.edu.co'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'login'
+
+
+# Celery / Message Broker (Redis)
+
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://redis_broker:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', CELERY_BROKER_URL)

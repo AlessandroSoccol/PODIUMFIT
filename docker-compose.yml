@@ -9,8 +9,11 @@ services:
       DJANGO_SETTINGS_MODULE: PodiumFit.settings
       DJANGO_DB_PATH: /data/db.sqlite3
       NOTIFICADOR_MODE: ${NOTIFICADOR_MODE:-MOCK}
+      CELERY_BROKER_URL: redis://redis_broker:6379/0
     volumes:
       - ./:/data
+    depends_on:
+      - redis_broker
     restart: unless-stopped
 
   cuentas:
@@ -30,6 +33,35 @@ services:
       - django
     restart: unless-stopped
 
+  datos:
+    build:
+      context: ./datos_service
+      dockerfile: Dockerfile
+    expose:
+      - "5000"
+    restart: unless-stopped
+
+  redis_broker:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A PodiumFit worker -l info
+    environment:
+      DJANGO_SETTINGS_MODULE: PodiumFit.settings
+      DJANGO_DB_PATH: /data/db.sqlite3
+      NOTIFICADOR_MODE: ${NOTIFICADOR_MODE:-MOCK}
+      CELERY_BROKER_URL: redis://redis_broker:6379/0
+    volumes:
+      - ./:/data
+    depends_on:
+      - redis_broker
+      - django
+    restart: unless-stopped
+
   nginx:
     image: nginx:1.27-alpine
     ports:
@@ -39,4 +71,5 @@ services:
     depends_on:
       - django
       - cuentas
+      - datos
     restart: unless-stopped

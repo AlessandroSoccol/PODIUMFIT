@@ -4,3 +4,6 @@ djangorestframework==3.18.0
 sqlparse==0.6.0
 tzdata==2026.3
 gunicorn==23.0.0
+celery==5.4.0
+redis==5.0.8
+requests==2.32.3
