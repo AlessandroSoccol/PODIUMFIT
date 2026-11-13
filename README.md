@@ -8,6 +8,8 @@ Desde el Taller 02, el sistema evoluciona hacia una **arquitectura híbrida**: e
 
 > 📖 La justificación completa (matriz de decisión, diagramas y separación técnica) está en la Wiki: **[Migración a Microservicios (Strangler Pattern)](https://github.com/AlessandroSoccol/PODIUMFIT/wiki)**.
 
+> 🌐 **Despliegue en vivo (AWS):** el sistema está desplegado y accesible en **[http://32.202.79.85:80](http://32.202.79.85:80)**.
+
 ## Descripción del proyecto
 
 PodiumFit está organizado como un **monolito modular por dominio**: cada app representa un límite de negocio claro (*bounded context*) y se comunica con las demás únicamente a través de interfaces explícitas (Factories/Services), nunca importando modelos de otras apps directamente.
@@ -153,11 +155,13 @@ Servicios que se levantan:
 
 #### 4. Probar
 
-| URL | Destino |
-|---|---|
-| `http://localhost:8080/` | Django (web, admin, reservas) |
-| `http://localhost:8080/api/v1/` | Django |
-| `http://localhost:8080/api/v2/cuentas/health` | Flask (healthcheck) |
+En local, el gateway Nginx queda en el puerto `8080`. En el despliegue de AWS, el punto de entrada es **[http://32.202.79.85:80](http://32.202.79.85:80)**.
+
+| URL (local) | URL (AWS) | Destino |
+|---|---|---|
+| `http://localhost:8080/` | `http://32.202.79.85:80/` | Django (web, admin, reservas) |
+| `http://localhost:8080/api/v1/` | `http://32.202.79.85:80/api/v1/` | Django |
+| `http://localhost:8080/api/v2/cuentas/health` | `http://32.202.79.85:80/api/v2/cuentas/health` | Flask (healthcheck) |
 
 ```bash
 # Registro
